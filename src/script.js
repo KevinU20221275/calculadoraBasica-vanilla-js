@@ -54,6 +54,14 @@ class Calculadora {
     elejirOperacion(operacion) {
         // No hacer nada si no hay valor actual ingresado
         if (this.valorActual === '') return
+
+        // ejecuta calcular si la operacion es '%' por separado por que se puede ejecutar con un solo valor o ambos
+        if ((this.valorActual !== '' || this.valorPrevio !== '') && operacion ==='%'){
+            this.operacion = operacion
+            this.calcular()
+            return
+        }
+
         // Si ya hay un valor previo, calcular el resultado de la operación anterior
         if (this.valorPrevio !== '') {
             this.calcular()
@@ -76,7 +84,8 @@ class Calculadora {
         const valor_1 = parseFloat(this.valorPrevio)
         const valor_2 = parseFloat(this.valorActual)
         // Si algún valor no es un número válido, salir de la función
-        if (isNaN(valor_1) || isNaN(valor_2)) return
+        // agrega la validacion que operacion sea diferente a '%' por que esta puede ejecutarse con un solo valor
+        if ((isNaN(valor_1) || isNaN(valor_2)) && this.operacion !== '%') return
         
         // Realiza el cálculo según el tipo de operación
         switch (this.operacion) {
@@ -91,6 +100,13 @@ class Calculadora {
                 break
             case '÷':
                 resultado = valor_1 / valor_2
+                break
+            case '%':
+                if (isNaN(valor_1)){
+                    resultado = (valor_2 / 100) // si solo se esta evaluando un valor
+                } else {
+                    resultado = valor_1 * (valor_2 / 100)
+                }
                 break
             default:
                 return
@@ -209,6 +225,12 @@ operacionButtons.forEach(button => {
         calculator.elejirOperacion(button.innerText)
         calculator.actualizarPantalla()
     })
+})
+
+// Evento para el boton de porcentaje (%)
+porcentajeButton.addEventListener('click', (e) => {
+    calculator.elejirOperacion(e.target.innerText)
+    calculator.actualizarPantalla();
 })
 
 // Evento para el botón igual (=)
