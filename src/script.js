@@ -77,6 +77,13 @@ class Calculadora {
         // No hacer nada si no hay valor actual ingresado
         if (this.valorActual === '') return
 
+        // this.valorActual sea NaN cuando tenga el mensaje de error (Math Error por la divicion por cero) 
+        // por eso reinicia la operacion
+        if (isNaN(parseFloat(this.valorActual))){
+            this.borrarTodo()
+            return
+        }
+
         // guarda la ultima accion/operacion
         this.ultimaAccion = operacion
         // almecena la operacion que se esta llevando acabo
@@ -138,7 +145,11 @@ class Calculadora {
                 resultado = valor_1 * valor_2
                 break
             case '÷':
-                resultado = valor_1 / valor_2
+                if (valor_2 === 0){
+                    resultado = "Math Error"
+                } else {
+                    resultado = valor_1 / valor_2
+                }
                 break
             case '%':
                 if (isNaN(valor_1)){
@@ -190,6 +201,12 @@ class Calculadora {
     formatearResultado(){
         const resultado = this.obtenerNumero(this.valorActual)
 
+        // comvierte el valor a numero
+        const num = parseFloat(this.valorActual)
+        
+        // si no es numero retorna el valor actual (strign de error division por 0)
+        if (isNaN(num)) return this.valorActual
+
         if (resultado.length >= this.limiteDigitos){
             const left = resultado.slice(0, 8)
             const right = resultado.slice(9, resultado.length)
@@ -205,7 +222,6 @@ class Calculadora {
      * Actualiza la pantalla de la calculadora con los valores actuales
      */
     actualizarPantalla() {
-        console.log(this.operacion)
         /**  cuando la ultima accion es producto de precionar el boton igual o es (%) muestra la operacion completa en el display superior
         * la comprobacion la hago sobre ultimaAccion por que en calcular this.operacion pasa a undefined 
         * y al precionar % invoco de una vez calcular() */
