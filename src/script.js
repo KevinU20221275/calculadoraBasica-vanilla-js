@@ -11,6 +11,8 @@ class Calculadora {
         // Almacena referencias a los elementos del DOM para mostrar los valores
         this.valorPrevioTextElement = valorPrevioTextElement
         this.valorActualTextElement = valorActualTextElement
+        // limita la cantidad de digitos en la pantalla
+        this.limiteDigitos = 11
         // Inicializa la calculadora limpiando todos los valores
         this.borrarTodo()
     }
@@ -37,6 +39,8 @@ class Calculadora {
      * @param {string} numero - El dígito o punto decimal a agregar
      */
     agregarNumero(numero) {
+        // evita seguir agregando numeros si ya igualo el limite de digitos permitidos
+        if (this.valorActual.length >= this.limiteDigitos) return
         // Evita agregar múltiples puntos decimales
         if (numero === '.' && this.valorActual.includes('.')) return
         // Concatena el nuevo número al valor actual
@@ -127,12 +131,29 @@ class Calculadora {
         }
     }
 
+    // TODO: buscar mejores opciones para formatear el resultado
+    formatearResultado(){
+        const resultado = this.obtenerNumero(this.valorActual)
+
+        if (resultado.length >= this.limiteDigitos){
+            const left = resultado.slice(0, 8)
+            const right = resultado.slice(9, resultado.length)
+            let resultadoFormateado = `${left}e+${right.length}`
+
+            return resultadoFormateado
+        }
+
+        return resultado
+    }
+
     /**
      * Actualiza la pantalla de la calculadora con los valores actuales
      */
     actualizarPantalla() {
         // Muestra el valor actual formateado en el display principal
-        this.valorActualTextElement.innerText = this.obtenerNumero(this.valorActual)
+        /* TODO: evaluar si se muestra el resultado producto de precionar igual '='
+        ya que por ahora el formateo afecta aun si solo se estan ingresando digitos */
+        this.valorActualTextElement.innerText = this.formatearResultado()
         // Si hay una operación seleccionada, muestra el valor previo y la operación
         if (this.operacion != null) {
             this.valorPrevioTextElement.innerText = `${this.obtenerNumero(this.valorPrevio)} ${this.operacion}`
