@@ -234,7 +234,7 @@ class Calculadora {
         }
            
         // Muestra el valor actual formateado en el display principal
-        this.valorActualTextElement.innerText = this.formatearResultado()
+        this.valorActualTextElement.innerText = this.obtenerNumero(this.valorActual)
 
         // Si hay una operación seleccionada, muestra el valor previo y la operación
         if (this.operacion != null) {
