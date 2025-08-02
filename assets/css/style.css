@@ -32,11 +32,22 @@ body {
   word-wrap: break-word;
   word-break: break-all;
   height: 100px;
+  width: 290px; /* ancho fijo para agregar un scroll en el display superior (.valor-previo) */
 }
 
 .pantalla .valor-previo {
   color: rgba(255, 255, 255, 0.75);
   font-size: 1.5rem;
+  width: 100%;
+  overflow-x: auto; /* agrega un scroll en el eje x */
+  white-space: nowrap; /* no permite los saltos de linea */
+  text-align: right;
+  display: block;
+}
+
+/* desaparece la barra del scroll */
+.pantalla .valor-previo::-webkit-scrollbar {
+  display: none;
 }
 
 .pantalla .valor-actual {
