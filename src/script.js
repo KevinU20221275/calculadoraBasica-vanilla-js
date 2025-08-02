@@ -197,27 +197,6 @@ class Calculadora {
         }
     }
 
-    // TODO: buscar mejores opciones para formatear el resultado
-    formatearResultado(){
-        const resultado = this.obtenerNumero(this.valorActual)
-
-        // comvierte el valor a numero
-        const num = parseFloat(this.valorActual)
-        
-        // si no es numero retorna el valor actual (strign de error division por 0)
-        if (isNaN(num)) return this.valorActual
-
-        if (resultado.length >= this.limiteDigitos){
-            const left = resultado.slice(0, 8)
-            const right = resultado.slice(9, resultado.length)
-            let resultadoFormateado = `${left}e+${right.length}`
-
-            return resultadoFormateado
-        }
-
-        return resultado
-    }
-
     /**
      * Actualiza la pantalla de la calculadora con los valores actuales
      */
@@ -226,10 +205,19 @@ class Calculadora {
         * la comprobacion la hago sobre ultimaAccion por que en calcular this.operacion pasa a undefined 
         * y al precionar % invoco de una vez calcular() */
         if (this.ultimaAccion === "=" || this.ultimaAccion === "%"){
+            let resultado;
+            // si el resultado es NaN this.valorActual es un String con el mensaje de error de divicion por 0
+            if (isNaN(parseFloat(this.valorActual))){
+                resultado = this.valorActual // resultado sera el mensaje de error
+            } else {
+                resultado = this.obtenerNumero(this.valorActual) // si es numerico formatea el numero
+            }
             // Muestra el valor actual formateado en el display principal
-            this.valorActualTextElement.innerText = this.formatearResultado()
+            this.valorActualTextElement.innerText = resultado
             // muestra la operacion completa en el display superior
             this.valorPrevioTextElement.innerText = this.opeacionCompleta
+            // mueve la pantalla al final/derecha (por si el numero es muy largo)
+            this.valorActualTextElement.scrollLeft = this.valorActualTextElement.scrollWidth
             return
         }
            
