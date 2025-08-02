@@ -16,6 +16,8 @@ class Calculadora {
         /*por eso necesito esta propiedad me servira para iniciar una nueva operacion al precionar un numero despues de haber presionado =
         y para mostrar el resultaod final */
         this.ultimaAccion = ""
+        // propiedad para guardar la opeacion completa
+        this.opeacionCompleta = ""
         // Inicializa la calculadora limpiando todos los valores
         this.borrarTodo()
     }
@@ -28,6 +30,7 @@ class Calculadora {
         this.valorPrevio = ''      // Valor que se usará para la operación
         this.operacion = undefined // Tipo de operación seleccionada (+, -, x, ÷)
         this.ultimaAccion = "" // ultima accion que se realizo (para detectar si se preciono el boton =)
+        this.opeacionCompleta = "" // limpia la operacion
     }
 
     /**
@@ -62,6 +65,8 @@ class Calculadora {
         if (numero === '.' && this.valorActual.includes('.')) return
         // Concatena el nuevo número al valor actual
         this.valorActual = this.valorActual.toString() + numero.toString()
+        // agrega el nuevo numero a la cadena de operacion completa
+        this.opeacionCompleta += numero
     }
 
     /**
@@ -74,6 +79,8 @@ class Calculadora {
 
         // guarda la ultima accion/operacion
         this.ultimaAccion = operacion
+        // almecena la operacion que se esta llevando acabo
+        this.opeacionCompleta += operacion
 
         // ejecuta calcular si la operacion es '%' por separado por que se puede ejecutar con un solo valor o ambos
         if ((this.valorActual !== '' || this.valorPrevio !== '') && operacion ==='%'){
@@ -198,10 +205,21 @@ class Calculadora {
      * Actualiza la pantalla de la calculadora con los valores actuales
      */
     actualizarPantalla() {
+        console.log(this.operacion)
+        /**  cuando la ultima accion es producto de precionar el boton igual o es (%) muestra la operacion completa en el display superior
+        * la comprobacion la hago sobre ultimaAccion por que en calcular this.operacion pasa a undefined 
+        * y al precionar % invoco de una vez calcular() */
+        if (this.ultimaAccion === "=" || this.ultimaAccion === "%"){
+            // Muestra el valor actual formateado en el display principal
+            this.valorActualTextElement.innerText = this.formatearResultado()
+            // muestra la operacion completa en el display superior
+            this.valorPrevioTextElement.innerText = this.opeacionCompleta
+            return
+        }
+           
         // Muestra el valor actual formateado en el display principal
-        /* TODO: evaluar si se muestra el resultado producto de precionar igual '='
-        ya que por ahora el formateo afecta aun si solo se estan ingresando digitos */
         this.valorActualTextElement.innerText = this.formatearResultado()
+
         // Si hay una operación seleccionada, muestra el valor previo y la operación
         if (this.operacion != null) {
             this.valorPrevioTextElement.innerText = `${this.obtenerNumero(this.valorPrevio)} ${this.operacion}`
