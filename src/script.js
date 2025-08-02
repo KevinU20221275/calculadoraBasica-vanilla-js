@@ -13,6 +13,9 @@ class Calculadora {
         this.valorActualTextElement = valorActualTextElement
         // limita la cantidad de digitos en la pantalla
         this.limiteDigitos = 11
+        /*por eso necesito esta propiedad me servira para iniciar una nueva operacion al precionar un numero despues de haber presionado =
+        y para mostrar el resultaod final */
+        this.ultimaAccion = ""
         // Inicializa la calculadora limpiando todos los valores
         this.borrarTodo()
     }
@@ -24,6 +27,7 @@ class Calculadora {
         this.valorActual = ''      // Valor que se está ingresando actualmente
         this.valorPrevio = ''      // Valor que se usará para la operación
         this.operacion = undefined // Tipo de operación seleccionada (+, -, x, ÷)
+        this.ultimaAccion = "" // ultima accion que se realizo (para detectar si se preciono el boton =)
     }
 
     /**
@@ -35,10 +39,23 @@ class Calculadora {
     }
 
     /**
+     * agrega la operacion de '=' a la propiedad ultimaAccion solo cuando se preciona el boton igual,
+     * necesito esta propiedad para saber si el resultado en pantalla es producto de haber precionado = y no por 
+     * la concatenacion de operaciones es decir (7 + 7 - 3 - 12) esto tambien va mostrando un total sin necesidad de haber precionado =
+    */
+    setIgual(){
+        this.ultimaAccion = '='
+    }
+
+    /**
      * Agrega un número (dígito) al valor actual que se está ingresando
      * @param {string} numero - El dígito o punto decimal a agregar
      */
     agregarNumero(numero) {
+        // si la ultima accion fue precionar el boton igual al agregar un nuevo numero se reinicia la operacion
+        if (this.ultimaAccion === '='){
+            this.borrarTodo()
+        }
         // evita seguir agregando numeros si ya igualo el limite de digitos permitidos
         if (this.valorActual.length >= this.limiteDigitos) return
         // Evita agregar múltiples puntos decimales
@@ -54,6 +71,9 @@ class Calculadora {
     elejirOperacion(operacion) {
         // No hacer nada si no hay valor actual ingresado
         if (this.valorActual === '') return
+
+        // guarda la ultima accion/operacion
+        this.ultimaAccion = operacion
 
         // ejecuta calcular si la operacion es '%' por separado por que se puede ejecutar con un solo valor o ambos
         if ((this.valorActual !== '' || this.valorPrevio !== '') && operacion ==='%'){
@@ -80,6 +100,18 @@ class Calculadora {
      */
     calcular() {
         let resultado
+
+        /** si no hay un valor actual y se invoco calcular pasa ultimaAccion a "" (para evitar que se recetee la operacion)
+        * esto pasa al concatenar operaciones ( 7 * 7 - = ) se ingresa una operacion y seguido se preciona igual con esto se evita
+        * realizar el calculo y fuerza al usuario a ingresar un valor para continuar
+        */
+        if (this.valorActual == ""){
+            // se pasa la ultimaAccion a "" por que al precionar el boton igual esta propiedad viene con el valor de (=)
+            // pero como this.valorActual esta vacio no se puede ejecutar el calculo por eso cambia la propiedad y sale del metodo
+            this.ultimaAccion = ""
+            return
+        }
+
         // Convierte los valores de string a números de punto flotante
         const valor_1 = parseFloat(this.valorPrevio)
         const valor_2 = parseFloat(this.valorActual)
@@ -236,6 +268,7 @@ porcentajeButton.addEventListener('click', (e) => {
 // Evento para el botón igual (=)
 // Ejecuta el cálculo de la operación pendiente y muestra el resultado
 igualButton.addEventListener('click', _button => {
+    calculator.setIgual() // llama primero a la funcion setIgual para indicar que la ultimaAccion fue =
     calculator.calcular()
     calculator.actualizarPantalla()
 })
