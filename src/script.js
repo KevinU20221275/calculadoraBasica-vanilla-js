@@ -74,6 +74,24 @@ class Calculadora {
      * @param {string} operacion - El símbolo de la operación (+, -, x, ÷)
      */
     elejirOperacion(operacion) {
+        // Si el usuario presiona "-" y el valor actual está vacío, lo interpretamos como un número negativo
+        if (operacion === '-' && this.valorActual === '') {
+            this.agregarNumero('-')
+            this.actualizarPantalla()
+            return
+        }
+
+        // También permite negativo después de otra operación si el valor actual sigue vacío
+        if (operacion === '-' && this.operacion != null && this.valorActual === '') {
+            this.valorActual = '-'
+            this.opeacionCompleta += operacion
+            this.actualizarPantalla()
+            return
+        }
+
+        // evita el spam de signos negativos (-)
+        if (this.operacion !== null && this.valorActual === "-") return
+
         // No hacer nada si no hay valor actual ingresado
         if (this.valorActual === '') return
 
@@ -118,10 +136,11 @@ class Calculadora {
         /** si no hay un valor actual y se invoco calcular pasa ultimaAccion a "" (para evitar que se recetee la operacion)
         * esto pasa al concatenar operaciones ( 7 * 7 - = ) se ingresa una operacion y seguido se preciona igual con esto se evita
         * realizar el calculo y fuerza al usuario a ingresar un valor para continuar
+        * tambien evita que si el valor actual solo es un signo negativo se realize el calculo
         */
-        if (this.valorActual == ""){
+        if (this.valorActual == "" || this.valorActual === "-"){
             // se pasa la ultimaAccion a "" por que al precionar el boton igual esta propiedad viene con el valor de (=)
-            // pero como this.valorActual esta vacio no se puede ejecutar el calculo por eso cambia la propiedad y sale del metodo
+            // pero como this.valorActual esta vacio o es (-) no se puede ejecutar el calculo por eso cambia la propiedad y sale del metodo
             this.ultimaAccion = ""
             return
         }
@@ -222,7 +241,7 @@ class Calculadora {
         }
            
         // Muestra el valor actual formateado en el display principal
-        this.valorActualTextElement.innerText = this.obtenerNumero(this.valorActual)
+        this.valorActualTextElement.innerText = this.valorActual == '-' ? this.valorActual : this.obtenerNumero(this.valorActual)
 
         // Si hay una operación seleccionada, muestra el valor previo y la operación
         if (this.operacion != null) {
