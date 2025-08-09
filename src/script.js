@@ -12,7 +12,7 @@ class Calculadora {
         this.valorPrevioTextElement = valorPrevioTextElement
         this.valorActualTextElement = valorActualTextElement
         // limita la cantidad de digitos en la pantalla
-        this.limiteDigitos = 11
+        this.limiteDigitos = 10
         /*por eso necesito esta propiedad me servira para iniciar una nueva operacion al precionar un numero despues de haber presionado =
         y para mostrar el resultaod final */
         this.ultimaAccion = ""
