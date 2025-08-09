@@ -39,6 +39,11 @@ class Calculadora {
     borrar() {
         // Convierte a string y remueve el último carácter usando slice
         this.valorActual = this.valorActual.toString().slice(0, -1)
+        if (this.ultimaAccion != "="){
+            this.opeacionCompleta = this.opeacionCompleta.toString().slice(0, -1)
+        } else {
+            this.opeacionCompleta = this.valorActual
+        }
     }
 
     /**
