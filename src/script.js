@@ -109,8 +109,8 @@ class Calculadora {
 
         // guarda la ultima accion/operacion
         this.ultimaAccion = operacion
-        // almecena la operacion que se esta llevando acabo
-        this.opeacionCompleta += operacion
+        // almecena la operacion que se esta llevando acabo (con un espacio entre los sinbolos y los numeros)
+        this.opeacionCompleta +=  " " + operacion + " "
 
         // ejecuta calcular si la operacion es '%' por separado por que se puede ejecutar con un solo valor o ambos
         if ((this.valorActual !== '' || this.valorPrevio !== '') && operacion ==='%'){
